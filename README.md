@@ -4,6 +4,8 @@ AI agent learning how to play the game MsPacMan (Atari 2600) thanks to Reinforce
 
 ## Install requirements
 
+The version of python used in this project was Python3.9
+
 You can install all the required libraries with the simple command :
 
 ```bash

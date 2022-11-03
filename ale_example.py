@@ -9,8 +9,8 @@ def main():
     ale.setInt("random_seed", 123)
     ale.loadROM(MsPacman)
 
-    # Get the list of legal actions
-    legal_actions = ale.getLegalActionSet()
+    # Get the list of minimal legal actions (some ALE actions are useless in this game)
+    legal_actions = ale.getMinimalActionSet()
     num_actions = len(legal_actions)
 
     total_reward = 0
