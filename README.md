@@ -11,9 +11,3 @@ You can install all the required libraries with the simple command :
 ```bash
 pip install -r ./requirements.txt
 ```
-
-After that, you'll need to import the bin file as a rom :
-
-```python
-ale-import-roms ./roms/
-```
