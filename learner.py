@@ -5,52 +5,24 @@ import math
 import random
 
 # Agent Parameters
+food_features = None
+ghost_features = None
 alpha = None
 gamma = None
 epsilon = None
-theta = [1, 1, 1, 1, 1]
+theta = [1, 1, 1, 1, 1]  # Weights of the features to be learned
 
 
 def getWeights(filename):
-    """Get the prior computed weights from the csv file storage
-
-    Parameters
-    --------
-        filename : str
-            name of csv to read
-    """
+    """Get the prior computed weights from the csv file storage"""
     global theta
     theta = csv_util.read_csv(filename)[0]
 
 
 def saveWeights(filename):
-    """Save the computed weights to a csv file for later use
-
-    Parameters
-    --------
-        filename : str
-            name of csv to write
-    """
+    """Save the computed weights to a csv file for later use"""
     global theta
     csv_util.write_csv(filename, theta)
-
-
-def convertEnv(env):
-    """Convert ALE screen from 1D array to 2D array
-
-    Parameters
-    --------
-        env : ndarray 1xn
-            1D array of the ALE screen where n is 210*160
-    Returns
-    --------
-        list(list(int))
-            2D array representation of the game screen
-    """
-    env_2d = []
-    for i in range(210):
-        env_2d.append(env[i * 160 : (i + 1) * 160].tolist())
-    return env_2d
 
 
 # Memory for game
@@ -79,19 +51,7 @@ pacman_pos = [0, 0]  # Pacman last position
 
 
 def getState(env):
-    """Generates the state from the environment
-    In the case of Ms Pacman, the game screen
-
-    Parameters
-    --------
-        env : list(list(int))
-            2D array of pixel values of the environment
-
-    Returns
-    --------
-        list(list(int))
-            2D array representing the state of the game
-    """
+    """Generates the state from the environment"""
     global env_model
     global blinky_pos
     global pinky_pos
@@ -245,20 +205,7 @@ prev_reward = None
 
 
 def Q_learn(state, reward):
-    """Q learning algorithm using temporal difference
-
-    Parameters
-    --------
-        state : list(list(int))
-            2D array representing the state of the game
-        reward : int
-            received reward
-
-    Returns
-    -------
-        int
-            number representing the next action to perform
-    """
+    """Q learning algorithm using temporal difference"""
     global prev_action
     global prev_reward
     global prev_state
@@ -329,7 +276,6 @@ def Q_learn(state, reward):
         pi, Qmax = maxQ(state)
         food_dist, num_food = findFoodFeatures(state)
         scared_dist, active_dist = findGhostFeatures()
-        oscillation = findOscillation(last_moves)
 
         if food_dist != 0:
             theta[0] = theta[0] + alpha * (reward + gamma * Qmax - Q) / food_dist
@@ -343,10 +289,6 @@ def Q_learn(state, reward):
             theta[2] = theta[2] + alpha * (reward + gamma * Qmax - Q) / active_dist
         else:
             theta[2] = theta[2] + alpha * (reward + gamma * Qmax - Q)
-        # if(oscillation != 0):
-        #     theta[3] = theta[3] + alpha*(reward + gamma*Qmax - Q)/oscillation
-        # else:
-        #     theta[3] = theta[3] + alpha*(reward + gamma*Qmax - Q)
         if num_food != 0:
             theta[4] = theta[4] + alpha * (reward + gamma * Qmax - Q) / num_food
         else:
@@ -359,18 +301,7 @@ def Q_learn(state, reward):
 
 
 def Q_val(state, action):
-    """Compute the expected Q value of a state action pair
-
-    Parameters
-    --------
-        state : list(list(int))
-            2D array representing the state of the game
-
-    Returns
-    --------
-        float
-            Q value
-    """
+    """Compute the expected Q value of a state action pair"""
     global blinky_pos
     global pinky_pos
     global clyde_pos
@@ -442,10 +373,10 @@ def Q_val(state, action):
 
     past_moves[1][1] += 1
 
-    dist_food, num_food = findFoodFeatures(next_state)
-    scared_dist, active_dist = findGhostFeatures()
-    # TODO  remove oscillation
-    oscillation = findOscillation(past_moves)
+    if food_features:
+        dist_food, num_food = findFoodFeatures(next_state)
+    if ghost_features:
+        scared_dist, active_dist = findGhostFeatures()
     pacman_pos = tmp
 
     Q = 0
@@ -453,41 +384,32 @@ def Q_val(state, action):
         Q += theta[0] / dist_food
     except ZeroDivisionError:
         Q += theta[0]
+    except UnboundLocalError:
+        pass
     try:
         Q += theta[1] / scared_dist
     except ZeroDivisionError:
         Q += theta[1]
+    except UnboundLocalError:
+        pass
     try:
         Q += theta[2] / active_dist
     except ZeroDivisionError:
         Q += theta[2]
-    # try:
-    #     Q += theta[3]/oscillation
-    # except ZeroDivisionError:
-    #     Q += theta[3]
+    except UnboundLocalError:
+        pass
     try:
         Q += theta[4] / num_food
     except ZeroDivisionError:
         Q += theta[4]
+    except UnboundLocalError:
+        pass
 
     return Q
 
 
 def maxQ(state):
-    """Find maximum Q value from Q table when performing actions in state
-
-    Parameters
-    --------
-        state : list(list(int))
-            2D array representing the state of the game
-
-    Returns
-    --------
-        int
-            action that has highest Q value
-        float
-            max Q value attainable
-    """
+    """Find maximum Q value from Q table when performing actions in state"""
     actions = [4, 2, 3, 5]  # [W, N, E, S]
     Qmax = -float("Inf")
     pi = 0
@@ -514,19 +436,7 @@ def maxQ(state):
 
 
 def explore(state):
-    """Function to control the exploration of the agent
-    using the Epsilon-Greedy Policy
-
-    Parameters
-    --------
-        state : list(list(int))
-            2D array representing the state of the game
-
-    Returns
-    --------
-        int
-            action to be performed by the agent
-    """
+    """Function to control the exploration of the agent"""
     global epsilon
 
     actions = [4, 2, 3, 5]  # [W, N, E, S]
@@ -542,18 +452,6 @@ def explore(state):
 def findFoodFeatures(grid):
     """Find the features distance to the nearest
     food position from Ms. Pacman
-
-    Parameters
-    --------
-        grid : list(list(int))
-            grid representation of the Atari screen
-
-    Returns
-    --------
-        int
-            sum of distances to all food from Ms. Pacman
-        int
-            number of food dot on the grid
     """
     global pacman_pos
 
@@ -576,13 +474,6 @@ def findFoodFeatures(grid):
 def findGhostFeatures():
     """Find the features related to the Ghosts, namely the distance
     to the closest scared ghost and active ghost
-
-    Returns
-    --------
-        int
-            Sum of distance to all scared ghost
-        int
-            Sum of distance to all active ghost
     """
     global blinky_pos
     global pinky_pos
@@ -679,11 +570,6 @@ def findGhostFeatures():
 def isDead():
     """Discover whether Ms. Pacman will is equivalently dead to give the
     reward before the game
-
-    Returns
-    -------
-        bool
-            Is Ms. Pacman equivalently dead
     """
     global blinky_pos
     global pinky_pos
@@ -735,23 +621,3 @@ def isDead():
 
 
 last_moves = [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
-
-
-def findOscillation(past_moves):
-    """Finds the oscillatory behavior of Ms. Pacman
-
-    Parameters
-    --------
-        past_moves : list(list(int))
-            2D array representing the short-term move memory of Ms. Pacman
-
-    Returns:
-    --------
-        int
-            oscillation factor of Ms. Pacman
-    """
-    oscillations = 0
-    for i in range(0, len(past_moves)):
-        for j in range(0, len(past_moves[0])):
-            oscillations += math.pow(past_moves[i][j], 0.5)
-    return oscillations

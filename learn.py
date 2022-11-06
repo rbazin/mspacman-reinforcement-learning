@@ -5,13 +5,13 @@ import os
 import numpy as np
 from random import randrange
 from ale_py import ALEInterface
-import RL
+import learner
 from time import time
 
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description="Starts a Q-learning agent with function estimation"
+        description="Trains a Q-learning agent using function estimation"
     )
     parser.add_argument(
         "--bin_file",
@@ -34,7 +34,7 @@ def get_args():
     parser.add_argument(
         "--alpha",
         type=float,
-        default=0.2,
+        default=0.5,
         help="Sets the learning rate of the Q-algorithm",
     )
     parser.add_argument(
@@ -56,14 +56,30 @@ def get_args():
         dest="display_screen",
         help="Enables display of the screen, may only work on Linux",
     )
+    parser.add_argument(
+        "--no_food_features",
+        default=True,
+        action="store_false",
+        dest="food_features",
+        help="Disables food features in the function estimation",
+    )
+    parser.add_argument(
+        "--no_ghost_features",
+        default=True,
+        action="store_false",
+        dest="ghost_features",
+        help="Disables ghost features in the function estimation",
+    )
     return parser.parse_args()
 
 
 def main():
     args = get_args()
-    RL.alpha = args.alpha
-    RL.gamma = args.gamma
-    RL.epsilon = args.epsilon
+    learner.alpha = args.alpha
+    learner.gamma = args.gamma
+    learner.epsilon = args.epsilon
+    learner.food_features = args.food_features
+    learner.ghost_features = args.ghost_features
 
     ale = ALEInterface()
     ale.setInt("random_seed", args.seed)
@@ -95,8 +111,8 @@ def main():
             screen_data = np.zeros((screen_width, screen_height), dtype=np.uint8)
             ale.getScreen(screen_data)
 
-            state = RL.getState(screen_data)
-            a = RL.Q_learn(state, reward)
+            state = learner.getState(screen_data)
+            a = learner.Q_learn(state, reward)
             if a is None:
                 a = legal_actions[randrange(num_actions)]
 
@@ -119,7 +135,7 @@ def main():
 
     print(f"Training completed in {end - start:.2f}s")
     # Should end with saving the weights learned
-    RL.saveWeights("weights.csv")
+    learner.saveWeights("weights.csv")
 
 
 if __name__ == "__main__":
