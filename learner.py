@@ -5,18 +5,19 @@ import math
 import random
 
 # Agent Parameters
-food_features = None
-ghost_features = None
+food_features = True
+ghost_features = True
 alpha = None
 gamma = None
 epsilon = None
-theta = [1, 1, 1, 1, 1]  # Weights of the features to be learned
+theta = [1.0, 1.0, 1.0, 1.0, 1.0]  # Weights of the features to be learned
 
 
 def getWeights(filename):
     """Get the prior computed weights from the csv file storage"""
     global theta
     theta = csv_util.read_csv(filename)[0]
+    return theta
 
 
 def saveWeights(filename):

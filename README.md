@@ -12,7 +12,7 @@ You can install all the required libraries with the simple command :
 pip install -r ./requirements.txt
 ```
 
-## Train model
+## Train the model
 
 To train the model with default parameters, use the following command :
 
@@ -31,15 +31,27 @@ All the personalizable parameters can be viewed using the -h flag :
 python learn.py -h
 ```
 
-## Test model
+## Test the model
 
 You can start a gain with this model using the following command :
 ```python
-python play.py --weights weights.csv
+python play.py --bin_file ./roms/mspacman.bin --weights weights.csv
 ```
 
 You can enable the video and audio display of the game with the --audio and --video flags (might only work on Linux) :
 
 ```python
-python play.py --weights weights.csv --audio --video
+python play.py --bin_file ./roms/mspacman.bin --weights weights.csv --display_screen
+```
+
+Once again, to display help use the -h flag :
+
+```python
+python play.py -h
+```
+
+Additionnally, you can test the model multiple times in a row with only one command using the bash script :
+
+```bash
+bash play_multiple_times.sh 10
 ```

@@ -46,7 +46,7 @@ def get_args():
     parser.add_argument(
         "--epsilon",
         type=float,
-        default=0.05,
+        default=0.10,
         help="Sets the exploration factor of the Q-algorithm",
     )
     parser.add_argument(
@@ -126,7 +126,7 @@ def main():
             f"Episode {episode + 1} completed with score {total_reward} in {end_episode - start_episode:.2f}s"
         )
 
-        with open("scores.txt", "a") as f:
+        with open("scores_no_food_features.txt", "a") as f:
             f.write(f"{episode + 1} {total_reward}\n")
 
         ale.reset_game()
@@ -135,6 +135,7 @@ def main():
 
     print(f"Training completed in {end - start:.2f}s")
     # Should end with saving the weights learned
+    print(f"Saving weights : {learner.theta}")
     learner.saveWeights("weights.csv")
 
 
