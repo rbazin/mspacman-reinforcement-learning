@@ -20,6 +20,18 @@ def get_args():
         help="Bin file of the game MsPacman",
     )
     parser.add_argument(
+        "--nbr_episodes",
+        type=int,
+        default=20,
+        help="Sets the number of games the agent will play",
+    )
+    parser.add_argument(
+        "--save_scores",
+        action="store_true",
+        default=False,
+        help="Enables saving the scores of the episodes played in a file",
+    )
+    parser.add_argument(
         "--weights",
         type=str,
         required=True,
@@ -68,24 +80,31 @@ def main():
     legal_actions = ale.getMinimalActionSet()
     num_actions = len(legal_actions)
 
-    start = time()
-    total_reward = 0
     print("Game starting")
-    while not ale.game_over():
-        (screen_width, screen_height) = ale.getScreenDims()
+    for episode in range(args.nbr_episodes):
+        start = time()
+        total_reward = 0
+        while not ale.game_over():
+            (screen_width, screen_height) = ale.getScreenDims()
 
-        screen_data = np.zeros((screen_width, screen_height), dtype=np.uint8)
-        ale.getScreen(screen_data)
+            screen_data = np.zeros((screen_width, screen_height), dtype=np.uint8)
+            ale.getScreen(screen_data)
 
-        state = learner.getState(screen_data)
-        a, _ = learner.maxQ(state)
-        if a is None:
-            a = legal_actions[randrange(num_actions)]
+            state = learner.getState(screen_data)
+            a, _ = learner.maxQ(state)
+            if a is None:
+                a = legal_actions[randrange(num_actions)]
 
-        total_reward += ale.act(a)
+            total_reward += ale.act(a)
 
-    end = time()
-    print(f"Game finished in {end - start:.2f}s with score {total_reward}")
+        end = time()
+        print(
+            f"Episode {episode + 1} finished in {end - start:.2f}s with score {total_reward}"
+        )
+
+        if args.save_scores:
+            with open("test_scores.txt", "a") as f:
+                f.write(f"{episode + 1} {total_reward}\n")
 
 
 if __name__ == "__main__":

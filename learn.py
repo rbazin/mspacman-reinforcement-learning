@@ -134,7 +134,8 @@ def main():
     end = time()
 
     print(f"Training completed in {end - start:.2f}s")
-    # Should end with saving the weights learned
+
+    # Save the weights
     print(f"Saving weights : {learner.theta}")
     learner.saveWeights("weights.csv")
 
