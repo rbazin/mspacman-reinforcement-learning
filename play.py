@@ -66,7 +66,7 @@ def main():
     # Load model weights
     path_weights = os.path.join(args.weights)
     assert os.path.exists(path_weights), "Weights not found"
-    learner.theta = learner.getWeights(path_weights)
+    learner.getWeights(path_weights)
     print(f"Loading parameters : {learner.theta}")
 
     if args.display_screen:

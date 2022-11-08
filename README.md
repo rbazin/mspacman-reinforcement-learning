@@ -33,19 +33,18 @@ python learn.py -h
 
 ## Test the model
 
-You can start a gain with this model using the following command :
+You can start a game with a trained model using the following command :
 ```python
 python play.py --bin_file ./roms/mspacman.bin --weights weights.csv
 ```
 
-You can enable the video and audio display of the game with the --audio and --video flags (might only work on Linux) :
+You can enable the video and audio display of the game with the --display_screen flag (might only work on Linux) :
 
 ```python
 python play.py --bin_file ./roms/mspacman.bin --weights weights.csv --display_screen
 ```
 
 Once again, to display help use the -h flag :
-
 ```python
 python play.py -h
 ```

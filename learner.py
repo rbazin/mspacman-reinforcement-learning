@@ -17,7 +17,6 @@ def getWeights(filename):
     """Get the prior computed weights from the csv file storage"""
     global theta
     theta = csv_util.read_csv(filename)[0]
-    return theta
 
 
 def saveWeights(filename):

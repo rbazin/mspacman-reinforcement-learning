@@ -126,7 +126,7 @@ def main():
             f"Episode {episode + 1} completed with score {total_reward} in {end_episode - start_episode:.2f}s"
         )
 
-        with open("scores_no_food_features.txt", "a") as f:
+        with open("scores.txt", "a") as f:
             f.write(f"{episode + 1} {total_reward}\n")
 
         ale.reset_game()
