@@ -1,4 +1,4 @@
-# PacMan Reinforcement Learning Project
+# MsPacMan Reinforcement Learning
 
 AI agent learns how to play the game **MsPacMan (Atari 2600)** using basic **Reinforcement Learning** methods such as **Q-learning** algorithm. 
 
