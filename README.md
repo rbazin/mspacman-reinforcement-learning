@@ -1,6 +1,8 @@
 # PacMan Reinforcement Learning Project
 
-AI agent learning how to play the game MsPacMan (Atari 2600) thanks to basic Reinforcement Learning methods such as Q-learning algorithm. This project was made for the course ECSE 526 at McGill University.
+AI agent learns how to play the game **MsPacMan (Atari 2600)** using basic **Reinforcement Learning** methods such as **Q-learning** algorithm. 
+
+This project was the third assignment of AI course ECSE526 at McGill University.
 
 ## Install requirements
 
