@@ -7,6 +7,7 @@ from random import randrange
 from ale_py import ALEInterface
 import learner
 from time import time
+import matplotlib.pyplot as plt
 
 
 def get_args():
@@ -18,6 +19,18 @@ def get_args():
         type=str,
         required=True,
         help="Bin file of the game MsPacman",
+    )
+    parser.add_argument(
+        "--graph_res",
+        default=False,
+        action="store_true",
+        help="Save the graph of the scores over all episodes of the training",
+    )
+    parser.add_argument(
+        "--save_scores",
+        default=False,
+        action="store_true",
+        help="Save the scores over all episodes of the training in a txt file",
     )
     parser.add_argument(
         "--seed",
@@ -99,6 +112,8 @@ def main():
     legal_actions = ale.getMinimalActionSet()
     num_actions = len(legal_actions)
 
+    rewards = []
+
     start = time()
     for episode in range(args.nbr_episodes):
         # Main loop
@@ -126,12 +141,22 @@ def main():
             f"Episode {episode + 1} completed with score {total_reward} in {end_episode - start_episode:.2f}s"
         )
 
-        with open("scores.txt", "a") as f:
-            f.write(f"{episode + 1} {total_reward}\n")
+        rewards.append(total_reward)
+
+        if args.save_scores:
+            with open("scores.txt", "a") as f:
+                f.write(f"{episode + 1} {total_reward}\n")
 
         ale.reset_game()
 
     end = time()
+
+    if args.graph_res:
+        plt.plot(rewards, label="score")
+        plt.xlabel("Episode")
+        plt.ylabel("Score")
+        plt.title(f"Evolution of the score during training")
+        plt.savefig("scores.png")
 
     print(f"Training completed in {end - start:.2f}s")
 
